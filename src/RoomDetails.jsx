@@ -22,9 +22,11 @@ const RoomDetails = () => {
   // ✅ Fallback UI check is now safely placed AFTER all hooks
   if (!room) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px' }}>
-        <h3>No room selected</h3>
-        <button className="apple-btn" onClick={() => navigate('/rooms')}>Go to Rooms</button>
+      <div className="page-shell" style={{ textAlign: 'center' }}>
+        <div className="apple-card" style={{ maxWidth: '520px', margin: '0 auto', padding: '40px' }}>
+          <h3 style={{ marginBottom: '24px' }}>No room selected</h3>
+          <button className="apple-btn" onClick={() => navigate('/rooms')}>Go to Rooms</button>
+        </div>
       </div>
     );
   }
@@ -42,49 +44,43 @@ const RoomDetails = () => {
   };
 
   return (
-    <div style={{ width: '100%', maxWidth: '900px', padding: '0 20px' }}>
-      {/* Back Button */}
-      <button 
-        onClick={() => navigate('/rooms')} 
-        style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', fontWeight: '500', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}
+    <div className="page-shell">
+      <button
+        onClick={() => navigate('/rooms')}
+        className="back-link"
+        style={{ marginBottom: '24px' }}
       >
         ← Back to Suites
       </button>
 
-      {/* Main Breakdown Layout */}
-      <div className="apple-card" style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-        <img 
-          src={room.img} 
-          alt={room.name} 
-          style={{ width: '100%', height: '400px', objectFit: 'cover' }} 
+      <div className="apple-card" style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <img
+          src={room.img}
+          alt={room.name}
+          style={{ width: '100%', height: '440px', objectFit: 'cover' }}
         />
-        
         <div style={{ padding: '40px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
-            <h1 style={{ margin: 0, fontSize: '36px', fontWeight: '700' }}>{room.name}</h1>
-            <h2 style={{ margin: 0, fontSize: '28px', color: 'var(--accent-blue)' }}>
-              ₹{room.price.toLocaleString('en-IN')} <span style={{ fontSize: '16px', color: 'var(--text-secondary)' }}>/ night</span>
+            <h1 className="section-title" style={{ margin: 0, fontSize: '2.6rem' }}>{room.name}</h1>
+            <h2 style={{ margin: 0, fontSize: '1.75rem', color: 'var(--accent-blue)' }}>
+              ₹{room.price.toLocaleString('en-IN')} <span style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>/ night</span>
             </h2>
           </div>
 
-          <p style={{ fontSize: '16px', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: '500' }}>{room.details}</p>
-          <p style={{ fontSize: '17px', lineHeight: '1.6', marginBottom: '40px' }}>{room.description}</p>
+          <p className="panel-copy" style={{ marginBottom: '16px' }}>{room.details}</p>
+          <p className="panel-copy" style={{ marginBottom: '30px' }}>{room.description}</p>
 
-          {/* Premium Included Offerings */}
-          <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '15px' }}>Premium Amenities Included:</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '40px' }}>
+          <h3 style={{ marginBottom: '16px' }}>Premium Amenities Included:</h3>
+          <div className="details-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', marginBottom: '36px' }}>
             {room.amenities.map((amenity, index) => (
-              <div key={index} style={{ background: 'rgba(255,255,255,0.4)', padding: '12px 16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.6)', fontSize: '15px' }}>
-                {amenity}
-              </div>
+              <div key={index} className="detail-chip">{amenity}</div>
             ))}
           </div>
 
-          {/* Dynamic Booking Control Interactivity */}
           {isBooked ? (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(40, 167, 69, 0.1)', padding: '20px', borderRadius: '16px', border: '1px solid rgba(40, 167, 69, 0.2)' }}>
-              <span style={{ color: '#28a745', fontWeight: '600', fontSize: '16px' }}>✓ You have reserved this room</span>
-              <button onClick={handleCancelBooking} style={{ background: 'none', border: 'none', color: '#dc3545', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}>
+            <div className="summary-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '14px' }}>
+              <span style={{ color: '#28a745', fontWeight: '600' }}>✓ You have reserved this room</span>
+              <button onClick={handleCancelBooking} className="apple-btn secondary" style={{ width: 'auto' }}>
                 Cancel Reservation
               </button>
             </div>
@@ -93,7 +89,6 @@ const RoomDetails = () => {
               Confirm Reservation
             </button>
           )}
-
         </div>
       </div>
     </div>

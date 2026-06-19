@@ -3,29 +3,65 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const cleanName = email.split('@')[0];
     
-    localStorage.setItem('hotel_user_name', cleanName); 
-    
-    // Notify our global state management hook inside App.jsx
-    if (onLoginSuccess) onLoginSuccess(cleanName);
-    
-    navigate('/rooms'); 
+    // Admin Trap
+    if (email === 'admin@hotel.com' && password === 'admin123') {
+      localStorage.setItem('hotel_user_name', 'Admin');
+      if (onLoginSuccess) onLoginSuccess('Admin');
+      navigate('/admin');
+      return;
+    }
+
+    // Regular User Login checking registered users list
+    const registeredUsersStr = localStorage.getItem('hotel_registered_users');
+    const registeredUsers = registeredUsersStr ? JSON.parse(registeredUsersStr) : [];
+    const matchedUser = registeredUsers.find(
+      u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    );
+
+    if (matchedUser) {
+      localStorage.setItem('hotel_user_name', matchedUser.name);
+      const userProfile = {
+        name: matchedUser.name,
+        email: matchedUser.email,
+        phone: matchedUser.phone,
+        dob: matchedUser.dob
+      };
+      localStorage.setItem('hotel_user_profile', JSON.stringify(userProfile));
+      if (onLoginSuccess) onLoginSuccess(matchedUser.name);
+      navigate('/rooms');
+    } else {
+      alert("Invalid email or password. Please try again or sign up.");
+    }
   };
 
   return (
-    <div style={{ width: '100%', maxWidth: '400px', padding: '0 20px' }}>
-      <div className="apple-card" style={{ padding: '40px' }}>
-        <h2 style={{ textAlign: 'center', margin: '0 0 30px 0', fontSize: '28px' }}>Sign In</h2>
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <input className="apple-input" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input className="apple-input" type="password" placeholder="Password" required />
-          <button className="apple-btn" type="submit" style={{ padding: '14px', fontSize: '16px' }}>Sign In</button>
-        </form>
+    <div className="page-shell">
+      <div className="apple-card" style={{ maxWidth: '520px', margin: '0 auto' }}>
+        <div className="form-panel">
+          <div>
+            <h2 className="section-title" style={{ marginBottom: '6px' }}>Sign In</h2>
+            <p className="panel-copy">Use your account to access exclusive suites and complete bookings fast.</p>
+          </div>
+          <form onSubmit={handleLogin} className="form-panel" style={{ padding: 0, background: 'transparent', border: 'none', boxShadow: 'none' }}>
+            <div className="field-group">
+              <div>
+                <label className="field-label">Email</label>
+                <input className="apple-input" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              </div>
+              <div>
+                <label className="field-label">Password</label>
+                <input className="apple-input" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              </div>
+            </div>
+            <button className="apple-btn" type="submit" style={{ width: '100%', marginTop: '10px' }}>Sign In</button>
+          </form>
+        </div>
       </div>
     </div>
   );
