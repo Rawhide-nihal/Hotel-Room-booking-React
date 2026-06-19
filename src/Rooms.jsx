@@ -2,81 +2,88 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Rooms = () => {
-  const [userName, setUserName] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [maxPrice, setMaxPrice] = useState(150000);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedName = localStorage.getItem('hotel_user_name');
-    if (!storedName) {
-      alert("Please login to view rooms.");
-      navigate('/login');
-    } else {
-      setUserName(storedName);
-    }
-  }, [navigate]);
-
   const roomsData = [
-    { 
-      id: 1, 
-      name: 'Deluxe Suite', 
-      price: 12500, 
-      details: 'Queen Bed • City View', 
-      img: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=600&q=80',
-      description: 'Our Deluxe Suite offers a seamless blend of sophisticated design and modern functionality. Perfect for corporate travelers or couples seeking a dynamic city retreat.',
-      amenities: ['📶 Free High-Speed Wi-Fi', '📺 55" Apple TV', '☕ Nespresso Machine', '🧼 Premium Toiletries']
-    },
-    { 
-      id: 2, 
-      name: 'Oceanview Suite', 
-      price: 24999, 
-      details: 'King Bed • Balcony', 
-      img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80',
-      description: 'Wake up to the soothing sound of crashing waves. The Oceanview Suite features a sprawling private balcony, a lavish king-sized bed, and floor-to-ceiling panoramic glass windows.',
-      amenities: ['🌊 Private Ocean Balcony', '🛁 Marble Bathtub', '🍹 Fully Stocked Minibar', '🛎️ 24/7 Butler Service']
-    },
-    { 
-      id: 3, 
-      name: 'Penthouse Retreat', 
-      price: 71500, 
-      details: '2 Bedrooms • Private Pool', 
-      img: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=600&q=80',
-      description: 'The pinnacle of luxury. Spanning the entire top floor, this ultra-exclusive penthouse features two master bedrooms, an expansive living lounge, and a private infinity pool overlooking the horizon.',
-      amenities: ['🏊‍♂️ Private Infinity Pool', '🍷 Exclusive Wine Cellar', '🧖‍♂️ Private In-suite Sauna', '🚗 Private Airport Chauffeur']
-    }
+    { id: 1, name: 'Standard Room', price: 3500, details: 'Queen Bed • City View', img: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=600&q=80', description: 'Cozy and efficient for short stays.', amenities: ['📶 Wi-Fi', '📺 TV'] },
+    { id: 2, name: 'Executive Room', price: 5500, details: 'King Bed • Work Desk', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80', description: 'Perfect for business travelers needing space.', amenities: ['📶 Wi-Fi', '☕ Coffee Maker'] },
+    { id: 3, name: 'Premium Sea View', price: 8000, details: 'King Bed • Ocean View', img: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=600&q=80', description: 'Wake up to the sounds of the ocean.', amenities: ['🌊 Sea View', '🥂 Minibar'] },
+    { id: 4, name: 'Maharaja Tent', price: 10000, details: 'Luxury Glamping', img: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80', description: 'Experience royal heritage in our climate-controlled outdoor tents.', amenities: ['🔥 Firepit', '🛎️ Room Service'] },
+    { id: 5, name: 'Luxury Suite', price: 12500, details: 'Separate Living Area', img: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80', description: 'Spacious elegance with premium furnishings.', amenities: ['🛋️ Lounge', '🛁 Bathtub'] },
+    { id: 6, name: 'Family Connected Suite', price: 15000, details: '2 Bedrooms • 4 Guests', img: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=600&q=80', description: 'Keep the family together without sacrificing privacy.', amenities: ['🎮 Game Console', '👨‍👩‍👧‍👦 Extra Beds'] },
+    { id: 7, name: 'Oceanfront Cabana', price: 18000, details: 'Beach Access', img: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=600&q=80', description: 'Step directly onto the sand from your private deck.', amenities: ['🏖️ Private Beach', '🍹 Welcome Drinks'] },
+    { id: 8, name: 'Royal Suite', price: 25000, details: 'Panoramic City Views', img: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80', description: 'High-floor luxury with unmatched cityscapes.', amenities: ['🌆 High Floor', '🍾 Champagne'] },
+    { id: 9, name: 'Presidential Suite', price: 45000, details: 'Ultimate Luxury', img: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=600&q=80', description: 'The choice for dignitaries and celebrities.', amenities: ['🎹 Grand Piano', '🛡️ Security'] },
+    { id: 10, name: 'Sky-high Penthouse', price: 60000, details: 'Rooftop Access', img: 'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=600&q=80', description: 'Own the top of the building for the night.', amenities: ['🚁 Helipad Access', '🍷 Wine Cellar'] },
+    { id: 11, name: 'Private Villa with Pool', price: 85000, details: 'Secluded Estate', img: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80', description: 'Absolute privacy with your own temperature-controlled pool.', amenities: ['🏊‍♂️ Private Pool', '🧑‍🍳 Private Chef'] },
+    { id: 12, name: 'The Imperial Residence', price: 120000, details: '3 Bedrooms • Cinema', img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80', description: 'The absolute pinnacle of Indian hospitality.', amenities: ['🎬 Private Cinema', '🚗 Rolls Royce Transfer'] }
   ];
 
-  const viewDetails = (room) => {
-    // Pass the selected room data via React Router state
-    navigate('/room-details', { state: { room } });
-  };
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('hotel_user_name'));
+  }, []);
+
+  const filteredRooms = roomsData.filter(room => 
+    room.name.toLowerCase().includes(searchQuery.toLowerCase()) && room.price <= maxPrice
+  );
 
   return (
-    <div style={{ padding: '20px', width: '100%', maxWidth: '1100px' }}>
-      <h1 style={{ textAlign: 'center', fontSize: '42px', marginBottom: '40px', fontWeight: '700' }}>
-        Select Your Suite, {userName}.
-      </h1>
-
-      <div className="rooms-grid">
-        {roomsData.map((room) => (
-          <div key={room.id} className="apple-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
-              <img src={room.img} alt={room.name} className="room-img" />
-              <div style={{ padding: '20px' }}>
-                <h3 style={{ margin: '0 0 5px 0', fontSize: '22px' }}>{room.name}</h3>
-                <p style={{ margin: '0 0 10px 0', color: 'var(--text-secondary)' }}>{room.details}</p>
-                <h4 style={{ margin: '0 0 15px 0', fontSize: '20px', color: 'var(--text-primary)' }}>
-                  ₹{room.price.toLocaleString('en-IN')} <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>/ night</span>
-                </h4>
-              </div>
-            </div>
-            <div style={{ padding: '0 20px 20px 20px' }}>
-              <button className="apple-btn" style={{ width: '100%' }} onClick={() => viewDetails(room)}>
-                View Details
-              </button>
+    <div className="page-shell">
+      {!isLoggedIn ? (
+        <div className="apple-card" style={{ maxWidth: '520px', margin: '0 auto' }}>
+          <div className="card-hero" style={{ textAlign: 'center' }}>
+            <span style={{ fontSize: '72px', display: 'block', marginBottom: '18px' }}>🔒</span>
+            <h2 className="page-title">Exclusive Suite Collection</h2>
+            <p className="card-copy">Sign in to unlock our catalog and reserve your stay with premium member perks.</p>
+            <div className="cta-group" style={{ justifyContent: 'center' }}>
+              <button className="apple-btn" onClick={() => navigate('/login')}>Log In</button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <>
+          <section style={{ marginBottom: '32px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '20px' }}>
+              <div>
+                <h1 className="section-title">Select your suite</h1>
+                <p className="section-copy">Browse premium rooms, filter by price, and book with confidence.</p>
+              </div>
+            </div>
+          </section>
+
+          <div className="apple-card" style={{ padding: '28px', marginBottom: '40px' }}>
+            <div className="field-row">
+              <div>
+                <label className="field-label">Search suites</label>
+                <input type="text" className="apple-input" placeholder="Search (e.g. Pool)" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+              </div>
+              <div>
+                <label className="field-label">Max price: ₹{maxPrice.toLocaleString('en-IN')}</label>
+                <input type="range" min="3000" max="150000" step="5000" value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} />
+              </div>
+            </div>
+          </div>
+
+          <div className="rooms-grid">
+            {filteredRooms.map((room) => (
+              <div key={room.id} className="room-card">
+                <img src={room.img} alt={room.name} />
+                <div className="room-card-body">
+                  <h3 className="room-card-title">{room.name}</h3>
+                  <p className="room-card-meta">{room.details}</p>
+                  <p className="room-card-price">₹{room.price.toLocaleString('en-IN')}</p>
+                </div>
+                <div className="room-card-footer">
+                  <button className="apple-btn" style={{ width: '100%' }} onClick={() => navigate('/booking-form', { state: { room } })}>Book Now</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
